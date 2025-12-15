@@ -33,7 +33,10 @@
  */
 package fr.paris.lutece.plugins.captcha.modules.jcaptcha.service;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -42,7 +45,6 @@ import com.octo.captcha.service.image.ImageCaptchaService;
 import com.octo.captcha.service.sound.SoundCaptchaService;
 
 import fr.paris.lutece.plugins.captcha.service.ICaptchaEngine;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -51,6 +53,8 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 /**
  *
  */
+@ApplicationScoped
+@Named( "jcaptcha.jcaptchaEngineService" )
 public class JCaptchaEngineService implements ICaptchaEngine
 {
     private static final String CAPTCHA_PROVIDER = "JCaptcha";
@@ -58,9 +62,16 @@ public class JCaptchaEngineService implements ICaptchaEngine
     private static final String LOGGER = "lutece.captcha";
     private static final String PARAMETER_HONEY_POT = "jcaptchahoneypot";
     private static final String PARAMETER_J_CAPTCHA_RESPONSE = "j_captcha_response";
-    private static final String BEAN_NAME_JCAPTCHA_IMAGE_SERVICE = "jcaptcha.imageCaptchaService";
-    private static final String BEAN_NAME_JCAPTCHA_SOUND_SERVICE = "jcaptcha.soundCaptchaService";
+    public static final String BEAN_NAME_JCAPTCHA_IMAGE_SERVICE = "jcaptcha.imageCaptchaService";
+    public static final String BEAN_NAME_JCAPTCHA_SOUND_SERVICE = "jcaptcha.soundCaptchaService";
 
+    @Inject
+    @Named( BEAN_NAME_JCAPTCHA_IMAGE_SERVICE )
+    private ImageCaptchaService _imageCaptcha;
+    @Inject
+    @Named( BEAN_NAME_JCAPTCHA_SOUND_SERVICE )
+    private SoundCaptchaService _soundCaptcha;
+    
     /**
      * {@inheritDoc}
      */
@@ -78,16 +89,14 @@ public class JCaptchaEngineService implements ICaptchaEngine
         }
 
         captchaReponse = captchaReponse.toLowerCase( );
-        ImageCaptchaService imageCaptcha = (ImageCaptchaService) SpringContextService.getBean( BEAN_NAME_JCAPTCHA_IMAGE_SERVICE );
-        SoundCaptchaService soundCaptcha = (SoundCaptchaService) SpringContextService.getBean( BEAN_NAME_JCAPTCHA_SOUND_SERVICE );
         boolean validImage = false;
         boolean validSound = false;
         String sessionId = request.getSession( ).getId( );
 
         try
         {
-            validImage = imageCaptcha.validateResponseForID( sessionId, captchaReponse );
-            validSound = soundCaptcha.validateResponseForID( sessionId, captchaReponse );
+            validImage = _imageCaptcha.validateResponseForID( sessionId, captchaReponse );
+            validSound = _soundCaptcha.validateResponseForID( sessionId, captchaReponse );
         }
         catch( CaptchaServiceException e )
         {

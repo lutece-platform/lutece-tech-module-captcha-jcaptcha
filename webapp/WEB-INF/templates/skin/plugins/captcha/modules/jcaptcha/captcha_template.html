@@ -2,12 +2,12 @@
 	<label class="col-xs-12 control-label" for="j_captcha_response"> * #i18n{module.captcha.jcaptcha.message.response}</label>
 	<div class="col-xs-12">
 		<p>#i18n{module.captcha.jcaptcha.message.title}</p>
-		<img src="JCaptchaImage" alt="" />
+		<img src="JCaptchaImage" alt="" id="captchaImage" />
 		<div class="input-group">
 			<input class="form-control" type="text" id="j_captcha_response" name="j_captcha_response" value="" />
 			<input type="text" name="jcaptchahoneypot" value="" class="jchp" />
 			<div class="input-group-btn">
-				<a class="btn btn-primary btn-sm" onClick="javascript:window.captchaImage.location.reload();" href="javascript:window.captchaImage.location.reload();" title="#i18n{jcaptcha.message.reloaded}" id="captcha-reload">
+				<a class="btn btn-primary btn-sm" onClick="refreshJCaptchaImage();" href="refreshJCaptchaImage();" title="#i18n{jcaptcha.message.reloaded}" id="captcha-reload">
 					<i class="fa fa-refresh" alt="#i18n{jcaptcha.message.reloaded}"></i>&#160;#i18n{module.captcha.jcaptcha.message.reloaded}
 				</a>
 				<a class="btn btn-primary btn-sm" href="JCaptchaSound" target="_blank" id="captcha-sound">
@@ -18,3 +18,9 @@
 		</div>
 	</div>
 </div>
+
+<script>
+	function refreshJCaptchaImage(){
+		window.captchaImage.src="JCaptchaImage?"+ new Date().getTime();
+	}
+</script>

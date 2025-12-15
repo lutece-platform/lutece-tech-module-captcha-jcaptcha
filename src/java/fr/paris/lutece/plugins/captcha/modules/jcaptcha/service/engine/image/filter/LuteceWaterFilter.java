@@ -58,7 +58,7 @@ public class LuteceWaterFilter extends WaterFilter
      * @param dWavelength
      *            The wave length
      */
-    public LuteceWaterFilter( double dAmplitude, boolean antialias, double dPhase, double dWavelength )
+    public LuteceWaterFilter( float dAmplitude, boolean antialias, float dPhase, float dWavelength )
     {
         super( );
         setAmplitude( dAmplitude );

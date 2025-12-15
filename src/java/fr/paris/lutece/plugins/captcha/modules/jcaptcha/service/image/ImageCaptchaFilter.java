@@ -40,7 +40,7 @@
  */
 package fr.paris.lutece.plugins.captcha.modules.jcaptcha.service.image;
 
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.plugins.captcha.modules.jcaptcha.service.JCaptchaEngineService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 
 import java.awt.image.BufferedImage;
@@ -48,18 +48,21 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.octo.captcha.service.CaptchaServiceException;
-import com.octo.captcha.service.multitype.GenericManageableCaptchaService;
+import com.octo.captcha.service.image.ImageCaptchaService;
 
 /**
  * Generate Jcapcha test.
@@ -111,7 +114,8 @@ public class ImageCaptchaFilter implements Filter
         {
             // grab bean
             // MultiTypeCaptchaService captcha = (MultiTypeCaptchaService) SpringContextService.getPluginBean("jcaptcha", "imageCaptchaService");
-            GenericManageableCaptchaService captcha = (GenericManageableCaptchaService) SpringContextService.getBean( "jcaptcha.imageCaptchaService" );
+            ImageCaptchaService captcha  = CDI.current( ).select( ImageCaptchaService.class, NamedLiteral.of( JCaptchaEngineService.BEAN_NAME_JCAPTCHA_IMAGE_SERVICE ) ).get( );
+            
             AppLogService.info( "captcha : " + captcha );
 
             // get the session id that will identify the generated captcha.
